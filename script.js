@@ -11,7 +11,14 @@ class Calculator {
     this.operation = undefined;
   }
 
-  delete() {}
+  delete() {
+    this.currentNumber = this.currentNumber
+      .toString()
+      .split("")
+      .slice(0, length - 1)
+      .join("");
+    this.updateDisplay();
+  }
 
   appendNumber(number) {
     if (number === "." && this.currentNumber.includes(".")) return;
@@ -19,14 +26,34 @@ class Calculator {
   }
 
   chooseOperation(operation) {
-    this.previousNumberTextElement.innerText = this.currentNumber;
+    this.previousNumber = this.currentNumber;
     this.currentNumber = "";
+    this.operation = operation;
+    this.updateDisplay();
   }
 
-  compute() {}
+  compute(currentNumber, previousNumber) {
+    switch (this.operation) {
+      case "÷":
+        this.currentNumber = divide(currentNumber, previousNumber);
+        break;
+      case "*":
+        this.currentNumber = multiply(currentNumber, previousNumber);
+        break;
+      case "-":
+        this.currentNumber = subtract(currentNumber, previousNumber);
+        break;
+      case "+":
+        this.currentNumber = add(currentNumber, previousNumber);
+        break;
+    }
+    this.previousNumber = "";
+    this.updateDisplay();
+  }
 
   updateDisplay() {
     this.currentNumberTextElement.innerText = this.currentNumber;
+    this.previousNumberTextElement.innerText = this.previousNumber;
   }
 }
 
@@ -59,6 +86,22 @@ operationButtons.forEach((button) => {
     calculator.chooseOperation(button.innerText);
     calculator.updateDisplay();
   });
+});
+
+equalsButton.addEventListener("click", () => {
+  calculator.compute(
+    Number(currentNumberTextElement.innerText),
+    Number(previousNumberTextElement.innerText)
+  );
+});
+
+deleteButton.addEventListener("click", () => {
+  calculator.delete();
+});
+
+allClearButton.addEventListener("click", () => {
+  calculator.clear();
+  calculator.updateDisplay();
 });
 
 function add(num1, num2) {
